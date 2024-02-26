@@ -4,7 +4,7 @@
 
   <timestamp key="runTimestamp" datePattern="yyyyMMddHHmmss"/>
 
-  <appender name="LOGFILE" class="ch.qos.logback.core.FileAppender">
+  <appender name="LOGFILE" class="org.dataaccessioner.log.LazyFileAppender">
     <file>logs/dafixity-${runTimestamp}.log</file>
     <append>true</append>
     <encoder>
@@ -12,7 +12,7 @@
     </encoder>
   </appender>
 
-  <appender name="CSVREPORT" class="ch.qos.logback.core.FileAppender">
+  <appender name="CSVREPORT" class="org.dataaccessioner.log.LazyFileAppender">
     <file>logs/dafixity-report-${runTimestamp}.csv</file>
     <append>true</append>
     <encoder>
