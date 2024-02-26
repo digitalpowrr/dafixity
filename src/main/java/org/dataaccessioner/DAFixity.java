@@ -19,8 +19,13 @@
 
 package org.dataaccessioner;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.Appender;
+
 import org.apache.commons.cli.*;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.dataaccessioner.log.LazyFileAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -33,10 +38,7 @@ import java.io.InputStream;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -114,8 +116,9 @@ public class DAFixity
 
         // Initialize the log
         logger.info( "Running " + NAME + ", version " + version);
-        logger.info("Report file is '" + reportFile.getAbsolutePath() + "'");
+        logger.info("Reading DataAccessioner report file '" + reportFile.getAbsolutePath() + "'");
         logger.info("Parent accession directory path is '" + baseDirectory.getAbsolutePath() + "'");
+        logger.info("Writing dafixity results to: " + String.join(", ", getLogFilePaths()));
 
         // Parse the report, get our list of files
         logger.info("Parsing report to get the list of files and their checksums");
@@ -234,5 +237,22 @@ public class DAFixity
                 elapsedTime - TimeUnit.MILLISECONDS.toSeconds(elapsedTime));
     }
 
-
+    private static List<String> getLogFilePaths() {
+        List logs = new ArrayList<String>();
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+        for (ch.qos.logback.classic.Logger logger : context.getLoggerList()) {
+            for (Iterator<Appender<ILoggingEvent>> index = logger.iteratorForAppenders();
+                 index.hasNext(); ) {
+                LazyFileAppender<?> fileAppender = null;
+                Object enumElement = index.next();
+                if (enumElement instanceof LazyFileAppender) {
+                    fileAppender = (LazyFileAppender<?>) enumElement;
+                }
+                if (fileAppender != null) {
+                    logs.add(new File(fileAppender.getFile()).getAbsolutePath());
+                }
+            }
+        }
+        return logs;
+    }
 }
