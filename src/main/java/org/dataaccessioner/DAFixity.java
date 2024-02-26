@@ -38,12 +38,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public class DAFixity
 {
-
     private static final String NAME = "dafixity";
-    private static String version;
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS zzz");
     private static final Logger logger = LoggerFactory.getLogger(DAFixity.class);
     private static final Logger csvreport = LoggerFactory.getLogger("csvreport");
@@ -55,7 +54,7 @@ public class DAFixity
         String directory_path = "";
         List<DAFile> dafiles = new ArrayList<>();
 
-        version = getVersion();
+        String version = getVersion();
 
         // Get the report and directory path
         Options options = new Options();
@@ -160,12 +159,12 @@ public class DAFixity
 
             long fileEndTime = System.currentTimeMillis();
             long fileElapsedTime = fileEndTime - fileStartTime;
-            logger.info(FILE_MARKER, "'" + file.toString() +"': check runtime: " + getDuration(fileElapsedTime));
+            logger.info(FILE_MARKER, "'" + file +"': check runtime: " + getDuration(fileElapsedTime));
 
             csvreport.info("{};{};{};{};{}", DATE_FORMAT.format(fileStartDate),
                     dafile.getAccessionID(),
                     fullpath,
-                    Boolean.toString(status),
+                    status,
                     getDuration(fileElapsedTime));
         }
 
@@ -183,11 +182,11 @@ public class DAFixity
         try {
             String md5sum = DigestUtils.md5Hex(new FileInputStream(dafile));
             if (md5sum.equals(storedChecksum)) {
-                logger.info(FILE_MARKER, "'" + dafile.toString() + "': OK: checksums match");
+                logger.info(FILE_MARKER, "'" + dafile + "': OK: checksums match");
                 isOK = true;
             } else {
-                logger.warn(FILE_MARKER, "'" + dafile.toString() + "': MISMATCH: checksums do not match");
-                logger.warn(FILE_MARKER, "'" + dafile.toString() + "': expected " + storedChecksum + ", got " + md5sum );
+                logger.warn(FILE_MARKER, "'" + dafile + "': MISMATCH: checksums do not match");
+                logger.warn(FILE_MARKER, "'" + dafile + "': expected " + storedChecksum + ", got " + md5sum );
             }
         } catch (IOException ioe) {
             logger.error("Error opening '" + dafile.getAbsolutePath() + "': " + ioe.getMessage());
@@ -197,18 +196,13 @@ public class DAFixity
     }
 
     public static boolean checkReadFile(File file) {
-        if (! file.isFile() || ! file.canRead()) {
-            return false;
-        }
-        return true;
+        return file.isFile() && file.canRead();
     }
 
     public static String getCompletePath(File baseDirectory, DAFile dafile) {
-        return Paths.get(new StringBuilder(baseDirectory.getAbsolutePath())
-                .append(Paths.get(dafile.getFilePath()
-                        .toString())
-                        .toString())
-                .toString())
+        return Paths.get(baseDirectory.getAbsolutePath() +
+                        Paths.get(dafile.getFilePath()
+                                        .toString()))
                 .toString();
     }
 
@@ -233,12 +227,11 @@ public class DAFixity
     }
 
     private static String getDuration(long elapsedTime) {
-        String hhmmssms = String.format("%02d:%02d:%02d.%03d",
+        return String.format("%02d:%02d:%02d.%03d",
                 TimeUnit.MILLISECONDS.toHours(elapsedTime),
                 TimeUnit.MILLISECONDS.toMinutes(elapsedTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(elapsedTime)),
                 TimeUnit.MILLISECONDS.toSeconds(elapsedTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedTime)),
                 elapsedTime - TimeUnit.MILLISECONDS.toSeconds(elapsedTime));
-        return hhmmssms;
     }
 
 
