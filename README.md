@@ -8,7 +8,7 @@ files on disk.  It produces a detailed log, as well as a CSV report.
 
 ## Build prerequisites
 
-  * A recent version of Java (>= 1)
+  * A recent version of Java (>= 11)
   * Maven (>= 3.9)
 
 ## Build
