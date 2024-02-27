@@ -110,7 +110,7 @@ public class DAFixityTest {
         dafiles.add(dafile6);
         DAFile dafile7 = new DAFile(new File("/test-collection/folder4-deleted/deleted-sample4.m4v"), "a6f6fd76fed0770862b9ff0049b357d0", "dafixity-sample" );
         dafiles.add(dafile7);
-        DAFile dafile8 = new DAFile(new File("/test-collection/folder5-changed/folder5a-changed/changed-sample5a.txt"), "d61e884cdf73257617e7947defe8eb09", "dafixity-sample" );
+        DAFile dafile8 = new DAFile(new File("/test-collection/folder5-changed/folder5a-changed/changed-sample5a.txt"), "c8ae29fd0c58dc9ac6e7ffac5cf21b8f", "dafixity-sample" );
         dafiles.add(dafile8);
 
         return dafiles;
