@@ -66,7 +66,7 @@ the run.
 
 ## License
 
-Copyright © 2024 by Digital POWRR.
+Copyright © 2024 by Digital POWRR. 
 Copyright © 2017 by Scott Prater.
 
 DAFixity is free software: you can redistribute it and/or modify
