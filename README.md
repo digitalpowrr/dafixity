@@ -6,12 +6,148 @@ Accessioner, creates a list of accessioned files and their
 checksums, then validates those checksums against the accessioned
 files on disk.  It produces a detailed log, as well as a CSV report.
 
-## Build prerequisites
+Source: <https://github.com/digitalpowrr/dafixity>
+
+## Install
+
+The latest release zip distribution file can be downloaded at https://github.com/digitalpowrr/dafixity/releases/latest.
+
+Unzip the distribution zip file in the location of your choice.
+All dependencies are included within the package.
+
+## Run
+
+### Windows
+
+Open a Windows command prompt terminal and run `dafixity.exe` in the install folder.
+
+    C:\Users\someuser> cd <DAFIXITY_DIRECTORY>
+    C:\Users\someuser\<DAFIXITY_DIRECTORY> .\dafixity.exe -r \path\to\da\report -d \path\to\top\of\accession\tree
+    
+### Mac and Linux
+
+Open a terminal application (Terminal in Mac), then run the following commands:
+
+    cd <DAFIXITY_DIRECTORY>
+    java -jar ./dafixity -r /path/to/da/report -d /path/to/top/of/accession/tree
+
+Where *<DAFIXITY_DIRECTORY>* is the folder where you installed dafixity.
+
+### Usage 
+
+    usage: dafixity [options]
+        -r,--report <REPORT>         Path to Data Accessioner report file
+        -d,--directory <DIRECTORY>   Parent directory for accession tree in the
+                                     report
+        -h,--help                    This help message
+
+The logs are written to `logs/dafixity-<YYYYMMDDHHmmss>.log`;  the
+report is written to `logs/dafixity-report-<YYYYMMDDHHmmss>.csv`,
+where *YYYYMMDDHHmmss* is the date-time stamp of the beginning of
+the run.
+
+### Examples
+
+    /var/tmp/dafixity-1.2$ ./dafixity -r /var/tmp/dafixity-sample.xml -d /var/tmp/dafixity-sample
+    Running dafixity, version 1.2
+    Report file is '/var/tmp/dafixity-sample.xml'
+    Parent accession directory path is '/var/tmp/dafixity-sample'
+    Parsing report to get the list of files and their checksums
+    Starting fixity check at 2024-05-31 16:09:21.591 CST
+    Ending fixity check at 2024-05-31 16:09:21.614 CST
+    Fixity check run time: 00:00:00.021
+
+### Log output
+
+The log contains the detailed output of the run, including overall
+run time, run times for each file, and the status of each file
+found.
+
+**OK: checksums match**
+Generated file checksum matches the checksum in the report
+
+**File *xxx* not found or not readable.  Skipping.**
+File in the report was not found on disk, or is not readable.
+
+**MISMATCH: checksums do not match**
+Generated file checksum does not match the checksum in the report.
+The next line will show the expected checksum, and the generated
+checksum.
+
+The log file is written to `logs/dafixity.log`.
+
+### Sample log output
+
+```aidl
+2024-05-31 16:09:21,585 INFO  - Running dafixity, version 1.2
+2024-05-31 16:09:21,586 INFO  - Report file is '/var/tmp/dafixity-sample.xml'
+2024-05-31 16:09:21,586 INFO  - Parent accession directory path is '/var/tmp/dafixity-sample'
+2024-05-31 16:09:21,586 INFO  - Parsing report to get the list of files and their checksums
+2024-05-31 16:09:21,593 INFO  - Starting fixity check at 2024-05-31 16:09:21.591 CST
+2024-05-31 16:09:21,595 INFO  - Checking file '/var/tmp/dafixity-sample/test-collection/folder1/folder1a/sample1a.jpg'
+2024-05-31 16:09:21,604 INFO  - '/var/tmp/dafixity-sample/test-collection/folder1/folder1a/sample1a.jpg': OK: checksums match
+2024-05-31 16:09:21,606 INFO  - '/var/tmp/dafixity-sample/test-collection/folder1/folder1a/sample1a.jpg': check runtime: 00:00:00.009
+2024-05-31 16:09:21,607 INFO  - Checking file '/var/tmp/dafixity-sample/test-collection/folder1/folder1a/sample1a.pdf'
+2024-05-31 16:09:21,607 INFO  - '/var/tmp/dafixity-sample/test-collection/folder1/folder1a/sample1a.pdf': OK: checksums match
+2024-05-31 16:09:21,607 INFO  - '/var/tmp/dafixity-sample/test-collection/folder1/folder1a/sample1a.pdf': check runtime: 00:00:00.000
+2024-05-31 16:09:21,607 INFO  - Checking file '/var/tmp/dafixity-sample/test-collection/folder1/folder1b/sample1b.odt'
+2024-05-31 16:09:21,608 INFO  - '/var/tmp/dafixity-sample/test-collection/folder1/folder1b/sample1b.odt': OK: checksums match
+2024-05-31 16:09:21,608 INFO  - '/var/tmp/dafixity-sample/test-collection/folder1/folder1b/sample1b.odt': check runtime: 00:00:00.001
+2024-05-31 16:09:21,608 INFO  - Checking file '/var/tmp/dafixity-sample/test-collection/folder2/sample2.wpd'
+2024-05-31 16:09:21,611 INFO  - '/var/tmp/dafixity-sample/test-collection/folder2/sample2.wpd': OK: checksums match
+2024-05-31 16:09:21,612 INFO  - '/var/tmp/dafixity-sample/test-collection/folder2/sample2.wpd': check runtime: 00:00:00.003
+2024-05-31 16:09:21,612 INFO  - Checking file '/var/tmp/dafixity-sample/test-collection/folder2/folder2a/sample2a'
+2024-05-31 16:09:21,613 INFO  - '/var/tmp/dafixity-sample/test-collection/folder2/folder2a/sample2a': OK: checksums match
+2024-05-31 16:09:21,613 INFO  - '/var/tmp/dafixity-sample/test-collection/folder2/folder2a/sample2a': check runtime: 00:00:00.001
+2024-05-31 16:09:21,613 INFO  - Checking file '/var/tmp/dafixity-sample/test-collection/folder3/folder3a/folder3ai/random3ai'
+2024-05-31 16:09:21,613 INFO  - '/var/tmp/dafixity-sample/test-collection/folder3/folder3a/folder3ai/random3ai': OK: checksums match
+2024-05-31 16:09:21,613 INFO  - '/var/tmp/dafixity-sample/test-collection/folder3/folder3a/folder3ai/random3ai': check runtime: 00:00:00.000
+2024-05-31 16:09:21,613 INFO  - Checking file '/var/tmp/dafixity-sample/test-collection/folder4-deleted/deleted-sample4.m4v'
+2024-05-31 16:09:21,614 WARN  - File '/var/tmp/dafixity-sample/test-collection/folder4-deleted/deleted-sample4.m4v' not found or not readable.  Skipping.
+2024-05-31 16:09:21,614 INFO  - Checking file '/var/tmp/dafixity-sample/test-collection/folder5-changed/folder5a-changed/changed-sample5a.txt'
+2024-05-31 16:09:21,614 WARN  - '/var/tmp/dafixity-sample/test-collection/folder5-changed/folder5a-changed/changed-sample5a.txt': MISMATCH: checksums do not match
+2024-05-31 16:09:21,614 WARN  - '/var/tmp/dafixity-sample/test-collection/folder5-changed/folder5a-changed/changed-sample5a.txt': expected d61e884cdf73257617e7947defe8eb09, got 87c7ce7d1ee1ba0f79eea89e27ffbe53
+2024-05-31 16:09:21,614 INFO  - '/var/tmp/dafixity-sample/test-collection/folder5-changed/folder5a-changed/changed-sample5a.txt': check runtime: 00:00:00.000
+2024-05-31 16:09:21,614 INFO  - Ending fixity check at 2024-05-31 16:09:21.614 CST
+2024-05-31 16:09:21,614 INFO  - Fixity check run time: 00:00:00.021
+```
+
+### Report output
+
+The report output contains five columns, separated by semicolons.
+The columns are:
+
+* Date and time file was checked
+* Accession ID
+* Full path to file on disk
+* Check status:
+    * **true**:  checksums match
+    * **false**:  checksums don't match
+    * **FNF**:  file not found
+* Run time to check the file (in format *HH:MM:SS.sss*)
+
+The report file is written to `logs/dafixity-report.csv`.
+
+### Sample report output
+
+```aidl
+2024-05-31 16:09:21.593 CST;dafixity-sample;/var/tmp/dafixity-sample/test-collection/folder1/folder1a/sample1a.jpg;true;00:00:00.009
+2024-05-31 16:09:21.607 CST;dafixity-sample;/var/tmp/dafixity-sample/test-collection/folder1/folder1a/sample1a.pdf;true;00:00:00.000
+2024-05-31 16:09:21.607 CST;dafixity-sample;/var/tmp/dafixity-sample/test-collection/folder1/folder1b/sample1b.odt;true;00:00:00.001
+2024-05-31 16:09:21.608 CST;dafixity-sample;/var/tmp/dafixity-sample/test-collection/folder2/sample2.wpd;true;00:00:00.003
+2024-05-31 16:09:21.612 CST;dafixity-sample;/var/tmp/dafixity-sample/test-collection/folder2/folder2a/sample2a;true;00:00:00.001
+2024-05-31 16:09:21.613 CST;dafixity-sample;/var/tmp/dafixity-sample/test-collection/folder3/folder3a/folder3ai/random3ai;true;00:00:00.000
+2024-05-31 16:09:21.613 CST;dafixity-sample;/var/tmp/dafixity-sample/test-collection/folder4-deleted/deleted-sample4.m4v;FNF;
+2024-05-31 16:09:21.614 CST;dafixity-sample;/var/tmp/dafixity-sample/test-collection/folder5-changed/folder5a-changed/changed-sample5a.txt;false;00:00:00.000
+```
+
+## Develop
+### Prerequisites
 
   * A recent version of Java (>= 11)
   * Maven (>= 3.9)
 
-## Build
+### Build
 
 DAFixity is built using Maven.  To build, clone the repository:
 
@@ -29,30 +165,7 @@ the `target/` folder directly:
 
     dafixity-<version>.jar
 
-## Install
-
-Unzip the distribution zip file in the location of your choice.
-All dependencies are included within the package.
-
-## Run
-
-Run `dafixity` in the `dafixity-<version>` folder:
-
-    $ cd /path/to/dafixity-<version>
-    $ ./dafixity -r /path/to/da/report -d /path/to/top/of/accession/tree
-
-    usage: dafixity [options]
-        -r,--report <REPORT>         Path to Data Accessioner report file
-        -d,--directory <DIRECTORY>   Parent directory for accession tree in the
-                                     report
-        -h,--help                    This help message
-
-The logs are written to `logs/dafixity-<YYYYMMDDHHmmss>.log`;  the 
-report is written to `logs/dafixity-report-<YYYYMMDDHHmmss>.csv`, 
-where *YYYYMMDDHHmmss* is the date-time stamp of the beginning of 
-the run.
-
-## Contributing
+### Contributing
 
 1. Fork it!
 2. Create your feature branch: `git checkout -b my-new-feature`
